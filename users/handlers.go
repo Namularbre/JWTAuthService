@@ -8,19 +8,18 @@ import (
 	"net/http"
 )
 
-func PostCreate(c *gin.Context) {
-	var username string
-	var password string
+func Register(c *gin.Context) {
+	user := User{}
 
-	if err, err1 := c.Bind(&username), c.Bind(&password); err != nil && err1 != nil {
+	if err := c.Bind(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Bad request",
 		})
 		return
 	}
 
-	if existingUser, err := SelectByUsername(username); err != nil && existingUser == nil {
-		user, err := Create(username, password)
+	if existingUser, err := SelectByUsername(user.Username); err == nil && existingUser == nil {
+		user, err := Create(user.Username, string(user.Password)) //TODO: mettre le type password à string pour bdd
 		if err != nil {
 			log.Printf("Error: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -32,9 +31,14 @@ func PostCreate(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"user": user,
 		})
-	} else {
+	} else if err != nil && existingUser != nil {
 		c.JSON(http.StatusForbidden, gin.H{
 			"message": "User already exists",
+		})
+	} else {
+		log.Printf("Error: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Internal server error",
 		})
 	}
 }
@@ -75,6 +79,30 @@ func Login(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Unauthorized",
+		})
+	}
+}
+
+func Authenticate(c *gin.Context) {
+	var token string
+
+	if err := c.Bind(&token); err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Bad request",
+		})
+		return
+	}
+
+	if err := jwt.VerifyToken(token); err != nil {
+
+		log.Printf("Error: %v", err)
+		c.JSON(http.StatusForbidden, gin.H{
+			"logged": false,
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"logged": true,
 		})
 	}
 }

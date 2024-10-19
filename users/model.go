@@ -3,6 +3,7 @@ package users
 import (
 	"authService/hashing"
 	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
 	"os"
 )
 
@@ -41,6 +42,9 @@ func SelectByUsername(username string) (*User, error) {
 	defer db.Close()
 
 	rows, err := db.Query("SELECT idUser, password FROM users WHERE username = ?;", username)
+	if err != nil {
+		return nil, err
+	}
 
 	if rows.Next() {
 		var idUser int
