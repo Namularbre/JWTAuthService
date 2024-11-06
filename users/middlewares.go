@@ -7,6 +7,17 @@ import (
 	"strings"
 )
 
+func IsNotLoggedMiddleware(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+	if authHeader != "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Already logged"})
+		c.Abort()
+		return
+	}
+
+	c.Next()
+}
+
 func IsLoggedMiddleware(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
 	if authHeader == "" {

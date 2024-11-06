@@ -3,7 +3,7 @@ package users
 import (
 	"authService/hashing"
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/mattn/go-sqlite3"
 	"os"
 )
 
@@ -15,7 +15,9 @@ func Create(username string, password string) (*User, error) {
 
 	defer db.Close()
 
-	result, err := db.Exec("INSERT INTO users (username, password) VALUES (?, ?);", username, hashing.Hash(password))
+	hashedPassword := string(hashing.Hash(password))
+
+	result, err := db.Exec("INSERT INTO users (username, password) VALUES (?, ?);", username, hashedPassword)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +30,7 @@ func Create(username string, password string) (*User, error) {
 	return &User{
 		IdUser:   int(id),
 		Username: username,
-		Password: []byte(password),
+		Password: password,
 	}, nil
 }
 
@@ -58,7 +60,7 @@ func SelectByUsername(username string) (*User, error) {
 		return &User{
 			IdUser:   idUser,
 			Username: username,
-			Password: []byte(password),
+			Password: password,
 		}, nil
 	}
 	return nil, nil

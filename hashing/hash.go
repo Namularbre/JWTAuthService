@@ -1,16 +1,17 @@
 package hashing
 
 import (
-	"bytes"
+	"encoding/hex"
 	"golang.org/x/crypto/argon2"
 	"os"
+	"strings"
 )
 
-func Hash(plain string) []byte {
+func Hash(plain string) string {
 	salt := []byte(os.Getenv("SALT"))
-	return argon2.IDKey([]byte(plain), salt, 1, 64*1024, 4, 32)
+	return hex.EncodeToString(argon2.IDKey([]byte(plain), salt, 1, 64*1024, 4, 32))
 }
 
-func Compare(plain string, hash []byte) bool {
-	return bytes.Compare(Hash(plain), hash) == 0
+func Compare(plain string, hash string) bool {
+	return strings.Compare(Hash(plain), hash) == 0
 }

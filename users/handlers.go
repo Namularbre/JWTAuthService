@@ -8,6 +8,14 @@ import (
 	"net/http"
 )
 
+func RegisterView(c *gin.Context) {
+	c.HTML(http.StatusOK, "register.html", gin.H{})
+}
+
+func LoginView(c *gin.Context) {
+	c.HTML(http.StatusOK, "login.html", gin.H{})
+}
+
 func Register(c *gin.Context) {
 	user := User{}
 
@@ -19,7 +27,7 @@ func Register(c *gin.Context) {
 	}
 
 	if existingUser, err := SelectByUsername(user.Username); err == nil && existingUser == nil {
-		user, err := Create(user.Username, string(user.Password)) //TODO: mettre le type password à string pour bdd
+		user, err := Create(user.Username, user.Password)
 		if err != nil {
 			log.Printf("Error: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -44,17 +52,17 @@ func Register(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	var username string
-	var password string
+	var user *User
 
-	if err, err1 := c.Bind(&username), c.Bind(&password); err != nil && err1 != nil {
+	if err := c.Bind(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Bad request",
 		})
 		return
 	}
 
-	user, err := SelectByUsername(username)
+	requestPassword := user.Password
+	user, err := SelectByUsername(user.Username)
 	if err != nil {
 		log.Printf("Error: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -63,7 +71,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	if hashing.Compare(password, user.Password) {
+	if hashing.Compare(requestPassword, user.Password) {
 		token, err := jwt.CreateToken(user.Username, user.IdUser)
 		if err != nil {
 			log.Printf("Error: %v", err)
@@ -123,7 +131,7 @@ func PutUser(c *gin.Context) {
 	user := &User{
 		IdUser:   idUser,
 		Username: username,
-		Password: hashing.Hash(password),
+		Password: string(hashing.Hash(password)),
 	}
 
 	err := Update(user)
