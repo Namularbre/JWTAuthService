@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// Create add a user in database
 func Create(username string, password string) (*User, error) {
 	db, err := sql.Open(os.Getenv("DB_DRIVER_NAME"), os.Getenv("CONN_STR"))
 	if err != nil {
@@ -64,28 +65,4 @@ func SelectByUsername(username string) (*User, error) {
 		}, nil
 	}
 	return nil, nil
-}
-
-func Update(user *User) error {
-	db, err := sql.Open(os.Getenv("DB_DRIVER_NAME"), os.Getenv("CONN_STR"))
-	if err != nil {
-		return err
-	}
-
-	defer db.Close()
-
-	_, err = db.Exec("UPDATE users SET username = ?, password = ? WHERE idUser = ?;", user.Username, hashing.Hash(string(user.Password)), user.IdUser)
-	return err
-}
-
-func Delete(idUser int) error {
-	db, err := sql.Open(os.Getenv("DB_DRIVER_NAME"), os.Getenv("CONN_STR"))
-	if err != nil {
-		return err
-	}
-
-	defer db.Close()
-
-	_, err = db.Exec("DELETE FROM users WHERE idUser = ?;", idUser)
-	return err
 }
