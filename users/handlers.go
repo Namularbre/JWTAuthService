@@ -84,15 +84,23 @@ func Login(c *gin.Context) {
 }
 
 func Authenticate(c *gin.Context) {
-	var token string
-
-	if err := c.Bind(&token); err != nil {
-
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Bad request",
+			"message": "Authorization header missing",
 		})
 		return
 	}
+
+	const bearerPrefix = "Bearer "
+	if len(authHeader) <= len(bearerPrefix) || authHeader[:len(bearerPrefix)] != bearerPrefix {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid authorization header format",
+		})
+		return
+	}
+
+	token := authHeader[len(bearerPrefix):]
 
 	if err := jwt.VerifyToken(token); err != nil {
 
