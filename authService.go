@@ -14,7 +14,6 @@ func main() {
 	migration.Init()
 
 	r := gin.Default()
-	r.LoadHTMLGlob("views/*")
 
 	r.Use(func(c *gin.Context) {
 		start := time.Now()
@@ -27,10 +26,8 @@ func main() {
 		log.Printf("Status code: %d", status)
 	})
 
-	r.POST("/login", users.Login)
+	r.POST("/login", users.IsNotLoggedMiddleware, users.Login)
 	r.POST("/register", users.IsNotLoggedMiddleware, users.Register)
-	r.GET("/register", users.IsNotLoggedMiddleware, users.RegisterView)
-	r.GET("/login", users.IsNotLoggedMiddleware, users.LoginView)
 	r.POST("/authenticate", users.Authenticate)
 	r.PUT("/update", users.IsLoggedMiddleware, users.PutUser)
 	r.DELETE("/delete", users.IsLoggedMiddleware, users.DeleteUser)

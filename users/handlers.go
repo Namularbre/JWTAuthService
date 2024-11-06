@@ -8,14 +8,6 @@ import (
 	"net/http"
 )
 
-func RegisterView(c *gin.Context) {
-	c.HTML(http.StatusOK, "register.html", gin.H{})
-}
-
-func LoginView(c *gin.Context) {
-	c.HTML(http.StatusOK, "login.html", gin.H{})
-}
-
 func Register(c *gin.Context) {
 	user := User{}
 
@@ -39,7 +31,7 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"user": user,
 		})
-	} else if err != nil && existingUser != nil {
+	} else if err == nil && existingUser != nil {
 		c.JSON(http.StatusForbidden, gin.H{
 			"message": "User already exists",
 		})
