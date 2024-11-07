@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// IsNotLoggedMiddleware assure that the users doesn't send a JWT before accessing next step in the middleware pipeline
 func IsNotLoggedMiddleware(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
 	if authHeader != "" {
@@ -18,6 +19,7 @@ func IsNotLoggedMiddleware(c *gin.Context) {
 	c.Next()
 }
 
+// IsLoggedMiddleware assure that the user has a JWT before accessing next step of the middleware pipeline
 func IsLoggedMiddleware(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
 	if authHeader == "" {
