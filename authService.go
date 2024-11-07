@@ -15,6 +15,11 @@ func main() {
 
 	r := gin.Default()
 
+	err := r.SetTrustedProxies([]string{})
+	if err != nil {
+		panic(err)
+	}
+
 	r.Use(func(c *gin.Context) {
 		start := time.Now()
 		c.Next()
@@ -34,7 +39,7 @@ func main() {
 
 	log.Printf("Listening on http://" + listeningAddress)
 
-	err := r.Run(listeningAddress)
+	err = r.Run(listeningAddress)
 	if err != nil {
 		log.Fatalln(err)
 	}
