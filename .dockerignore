@@ -1,0 +1,8 @@
+# Jetbrains
+.idea
+authService.iml
+
+# Project
+.gitignore
+*.http
+Dockerfile
