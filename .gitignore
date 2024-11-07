@@ -6,6 +6,7 @@ authService.iml
 .env
 auth.db
 vendor
+authService
 
 # Http request made for testing
 *.http
