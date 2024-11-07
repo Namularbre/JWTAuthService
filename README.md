@@ -11,7 +11,9 @@ This API manage users for you.
 
 ## Setup
 
-After cloning this repository, run this docker command to build the API image
+After cloning this repository, create a file called **auth.db**
+
+Run this docker command to build the API image
 ````
 docker build . -t auth-service
 ````
