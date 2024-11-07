@@ -63,6 +63,13 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	if user == nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Unauthorized",
+		})
+		return
+	}
+
 	if hashing.Compare(requestPassword, user.Password) {
 		token, err := jwt.CreateToken(user.Username, user.IdUser)
 		if err != nil {

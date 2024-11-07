@@ -31,7 +31,6 @@ func Create(username string, password string) (*User, error) {
 	return &User{
 		IdUser:   int(id),
 		Username: username,
-		Password: password,
 	}, nil
 }
 
@@ -44,7 +43,7 @@ func SelectByUsername(username string) (*User, error) {
 
 	defer db.Close()
 
-	rows, err := db.Query("SELECT idUser, password FROM users WHERE username = ?;", username)
+	rows, err := db.Query("SELECT idUser, password, isAdmin FROM users WHERE username = ?;", username)
 	if err != nil {
 		return nil, err
 	}
@@ -52,8 +51,9 @@ func SelectByUsername(username string) (*User, error) {
 	if rows.Next() {
 		var idUser int
 		var password string
+		var isAdmin bool
 
-		err = rows.Scan(&idUser, &password)
+		err = rows.Scan(&idUser, &password, &isAdmin)
 		if err != nil {
 			return nil, err
 		}
