@@ -34,6 +34,7 @@ func main() {
 	r.POST("/login", users.IsNotLoggedMiddleware, users.Login)
 	r.POST("/register", users.IsNotLoggedMiddleware, users.Register)
 	r.POST("/authenticate", users.IsLoggedMiddleware, users.Authenticate)
+	r.GET("/isAdmin", users.IsLoggedMiddleware, users.IsAdmin)
 
 	listeningAddress := os.Getenv("ADDRESS") + ":" + os.Getenv("PORT")
 

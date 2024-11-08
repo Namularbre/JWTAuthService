@@ -1,6 +1,7 @@
 package jwt
 
 import (
+	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"os"
@@ -31,4 +32,21 @@ func VerifyToken(tokenString string) error {
 		return fmt.Errorf("invalid token")
 	}
 	return nil
+}
+
+func ExtractUsername(tokenString string) (string, error) {
+	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
+	if err != nil {
+		return "", err
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		if username, exists := claims["username"]; exists {
+			return username.(string), nil
+		} else {
+			return "", errors.New("the field username is not in the token")
+		}
+	} else {
+		return "", errors.New("the token claims are in the wrong type")
+	}
 }

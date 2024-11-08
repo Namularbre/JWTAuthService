@@ -121,3 +121,44 @@ func Authenticate(c *gin.Context) {
 		})
 	}
 }
+
+func IsAdmin(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Authorization header missing",
+		})
+		return
+	}
+
+	const bearerPrefix = "Bearer "
+	if len(authHeader) <= len(bearerPrefix) || authHeader[:len(bearerPrefix)] != bearerPrefix {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid authorization header format",
+		})
+		return
+	}
+
+	token := authHeader[len(bearerPrefix):]
+
+	username, err := jwt.ExtractUsername(token)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Internal server error",
+		})
+		return
+	}
+
+	user, err := SelectByUsername(username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Internal server error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"isAdmin": user.IsAdmin,
+	})
+}

@@ -62,6 +62,7 @@ func SelectByUsername(username string) (*User, error) {
 			IdUser:   idUser,
 			Username: username,
 			Password: password,
+			IsAdmin:  isAdmin,
 		}, nil
 	}
 	return nil, nil
