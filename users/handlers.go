@@ -116,8 +116,17 @@ func Authenticate(c *gin.Context) {
 			"logged": false,
 		})
 	} else {
+		username, err := jwt.ExtractUsername(token)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Internal server error",
+			})
+			return
+		}
+
 		c.JSON(http.StatusOK, gin.H{
-			"logged": true,
+			"logged":   true,
+			"username": username,
 		})
 	}
 }
