@@ -3,8 +3,9 @@ package users
 import (
 	"authService/hashing"
 	"database/sql"
-	_ "github.com/mattn/go-sqlite3"
 	"os"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // Create add a user in database
@@ -52,17 +53,21 @@ func SelectByUsername(username string) (*User, error) {
 		var idUser int
 		var password string
 		var isAdmin bool
+		var phoneNumber string
+		var email string
 
-		err = rows.Scan(&idUser, &password, &isAdmin)
+		err = rows.Scan(&idUser, &password, &isAdmin, &phoneNumber, &email)
 		if err != nil {
 			return nil, err
 		}
 
 		return &User{
-			IdUser:   idUser,
-			Username: username,
-			Password: password,
-			IsAdmin:  isAdmin,
+			IdUser:      idUser,
+			Username:    username,
+			Password:    password,
+			IsAdmin:     isAdmin,
+			PhoneNumber: phoneNumber,
+			Email:       email,
 		}, nil
 	}
 	return nil, nil
