@@ -2,5 +2,7 @@ CREATE TABLE IF NOT EXISTS users (
     idUser INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
-    isAdmin BIT NOT NULL DEFAULT 0
+    isAdmin BIT NOT NULL DEFAULT 0,
+    email TEXT NOT NULL,
+    phoneNumber TEXT NOT NULL
 );

@@ -3,11 +3,12 @@ package main
 import (
 	"authService/migration"
 	"authService/users"
-	"github.com/gin-gonic/gin"
-	_ "github.com/joho/godotenv/autoload"
 	"log"
 	"os"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
@@ -38,7 +39,7 @@ func main() {
 
 	listeningAddress := os.Getenv("ADDRESS") + ":" + os.Getenv("PORT")
 
-	log.Printf("Listening on http://" + listeningAddress)
+	log.Printf("Listening on http://%s", listeningAddress)
 
 	err = r.Run(listeningAddress)
 	if err != nil {
